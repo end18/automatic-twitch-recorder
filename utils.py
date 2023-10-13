@@ -33,6 +33,7 @@ def _read_config():
     try:
         config_path.resolve(strict=True)
     except FileNotFoundError as ex:
+        _read_env()
         config_file = open(config_path, 'w')
         CONFIG = {
             'client_id': '',
@@ -47,6 +48,7 @@ def _read_config():
         config_file.close()
 
 def _read_env():
+            global CONFIG
             CONFIG = {
             'client_id': os.environ['client_id'],
             'client_secret': os.environ['client_secret'],
@@ -65,7 +67,6 @@ def get_client_id():
     global CONFIG
     if not CONFIG:
         _read_config()
-        _read_env()
         
     if not CONFIG['client_id']:
         print('Client id unset.')
