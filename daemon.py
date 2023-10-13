@@ -1,4 +1,5 @@
 import logging
+import json
 import os
 import threading
 from concurrent.futures import ThreadPoolExecutor
@@ -96,11 +97,13 @@ class Daemon(HTTPServer):
             user_ids.append(self.streamers[streamer]['user_info']['id'])
 
         if user_ids:
-            streams_info = twitch.get_stream_info(*user_ids)
+            streams_info_list = twitch.get_stream_info(*user_ids)
+            strjson = json.dumps(streams_info_list, indent=4)
+            print(strjson)
 
             # save streaming information for all streamers, if it exists
-            for stream_info in streams_info:
-                streamer_name = stream_info['user_name'].lower()
+            for stream_info in streams_info_list:
+                streamer_name = stream_info['user_login'].lower()
                 self.streamers[streamer_name].update({'stream_info': stream_info})
 
             live_streamers = []
@@ -108,9 +111,9 @@ class Daemon(HTTPServer):
             # check which streamers are live
             for streamer_info in self.streamers.values():
                 try:
-                    stream_info = streamer_info['stream_info']
+                    #stream_info = streamer_info
                     if stream_info['type'] == 'live':
-                        live_streamers.append(stream_info['user_name'].lower())
+                        live_streamers.append(stream_info['user_login'].lower())
                 except KeyError:
                     pass
 
