@@ -46,6 +46,12 @@ def _read_config():
         CONFIG = json.loads(config_file.read())
         config_file.close()
 
+def _read_env():
+            CONFIG = {
+            'client_id': os.environ['client_id'],
+            'client_secret': os.environ['client_secret'],
+            'ngrok_authtoken': os.environ['ngrok_authtoken']
+             }
 
 def _write_config():
     global CONFIG
@@ -59,6 +65,8 @@ def get_client_id():
     global CONFIG
     if not CONFIG:
         _read_config()
+        _read_env()
+        
     if not CONFIG['client_id']:
         print('Client id unset.')
         print('Visit the following website to generate a client id and client secret for this script.')
